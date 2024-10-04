@@ -6,7 +6,7 @@ import os
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'supersecretkey'
-    SQLALCHEMY_DATABASE_URI = 'postgres://myntkukx:bR3y3T5DDxkcamewmLezfNi3-zHYV7ga@jelani.db.elephantsql.com/myntkukx'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://myntkukx:bR3y3T5DDxkcamewmLezfNi3-zHYV7ga@jelani.db.elephantsql.com/myntkukx'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'anothersecretkey'
     JWT_ACCESS_TOKEN_EXPIRES = 3600
