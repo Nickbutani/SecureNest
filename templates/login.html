@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://kit.fontawesome.com/b15cd79f79.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="logo">
+       <a href="{{url_for ('home')}}" class="logo-h1"> SecureNest</a>
+    </div>
+    <div class="login">
+        <div class="login-content">
+            <h1 class="login-h1">Login</h1>
+            <form id="login-form">
+                <div class="inputs">
+                    <input class="input" type="text" id="username" placeholder="Username" required>
+                    <input class="input" type="password" id="password" placeholder="Password" required>
+                </div>
+                <div class="buttons">
+                    <button class="btn" type="submit">Login</button>
+                    <button class="btn"type="button" onclick="location.href='/register'">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('login-form').onsubmit = async function(event) {
+        event.preventDefault();
+        const response = await fetch('/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            })
+        });
+        const data = await response.json();
+        alert(data.message);
+
+        if (response.ok) {
+            // Store the access token in localStorage
+            localStorage.setItem('access_token', data.access_token);
+            // Redirect to the profile page
+            window.location.href = data.redirect_url;
+        }
+    };
+    </script>
+</body>
+</html>

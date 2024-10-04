@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="logo">
+        <a href="{{url_for ('home')}}" class="logo-h1"> SecureNest</a>
+     </div>
+    <div class="register">
+        <div class="register-content">
+            <h1 class="register-h1"">Register</h1>
+            <form id="register-form">
+                <div class="inputs">
+                    <input type="text" id="username" placeholder="Username" required>
+                    <input type="password" id="password" placeholder="Password" required>
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="text" id="role" placeholder="Role (admin/user)" required>
+                </div>
+                <div class="reg-buttons">
+                    <button class="btn" type="submit">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('register-form').onsubmit = async function(event) {
+            event.preventDefault();
+            const response = await fetch('/email_verification/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    username: document.getElementById('username').value,
+                    password: document.getElementById('password').value,
+                    email: document.getElementById('email').value,
+                    role: document.getElementById('role').value
+                })
+            });
+            const data = await response.json();
+            alert(data.message);
+            if (response.ok) {
+                window.location.href = '/';
+            }
+        };
+    </script>
+</body>
+</html>

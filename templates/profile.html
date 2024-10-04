@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://kit.fontawesome.com/b15cd79f79.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="logo">
+        <a href="{{url_for ('home')}}" class="logo-h1"> SecureNest</a>
+     </div>
+    <div class="profile">
+        <div class="profile-content">
+            <div class="pro-pic">
+                <img class="profile-img" src="https://www.gravatar.com/avatar/{{ profile_picture }}" alt="Profile Picture">
+            </div>
+            <div class="profile-info-div">
+                <div id="profile-info">
+                    <div class="info">
+                        <p>Username: <span id="profile-username"></span></p>
+                        <p>Email: <span id="profile-email"></span></p>
+                    </div>
+                    <div class="editbtn">
+                        <a href="javascript:void(0);" id="toggle-form-btn"><i class="fa-solid fa-user-pen"></i></a>
+                    </div>
+                </div>
+
+                <div id="forms-container" style="display: none;">
+                    <form id="update-profile-form">
+                        <div class="pro-inputs">
+                            <input type="text" id="new-username" placeholder="New Username">
+                            <input type="email" id="new-email" placeholder="New Email">
+                        </div>
+                        <div class="pro-buttons">
+                            <button  class="btn" type="submit">Update Profile</button>
+                        </div>
+                    </form>
+                    <form id="change-password-form">
+                        <div class="pro-inputs">
+                            <input type="email" id="email" placeholder="Email">
+                        </div>
+                        <div class="pro-buttons">
+                            <button class="btn" type="submit">Change Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div> 
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                alert('No access token found. Please log in.');
+                window.location.href = '/login'; 
+                return;
+            }
+    
+            try {
+                const response = await fetch('/user_profile/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+    
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById('profile-username').textContent = data.username;
+                    document.getElementById('profile-email').textContent = data.email;
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+                alert('An error occurred while fetching the profile.');
+            }
+    
+            document.getElementById('update-profile-form')?.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const response = await fetch('/user_profile/profile/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                        username: document.getElementById('new-username').value,
+                        email: document.getElementById('new-email').value
+                    })
+                });
+                const data = await response.json();
+                alert(data.message);
+            });
+    
+            document.getElementById('change-password-form')?.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const response = await fetch('/password_reset/password-reset', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                        email: document.getElementById('email').value
+                    })
+                });
+                const data = await response.json();
+                alert(data.message);
+            });
+            document.getElementById("toggle-form-btn").addEventListener("click", function(event) {
+                event.preventDefault();
+                var formsContainer = document.getElementById("forms-container");
+                
+        
+                if (formsContainer.style.display === "none" || formsContainer.style.display === "") {
+                    formsContainer.style.display = "block";
+                } else {
+                    formsContainer.style.display = "none";  
+                }
+            });
+        });
+    </script>
+</body>
+</html>
